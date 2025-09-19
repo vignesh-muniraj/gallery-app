@@ -3,19 +3,25 @@ import { useFormik } from "formik";
 import { object, string, ref } from "yup";
 import TextField from "@mui/material/TextField";
 import { useNavigate, Link } from "react-router-dom";
-import { API } from "../pages/Global";
-import "../style.css";
+import { API } from "../Global";
 
-export function Signup() {
+function Signup() {
   const navigate = useNavigate();
 
   const formik = useFormik({
-    initialValues: { username: "", email: "", password: "", confirmPassword: "" },
+    initialValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
     validationSchema: object({
       username: string().required("Username required"),
       email: string().email("Invalid email").required("Email required"),
       password: string().required("Password required").min(8),
-      confirmPassword: string().oneOf([ref("password"), null], "Passwords must match").required("Confirm password"),
+      confirmPassword: string()
+        .oneOf([ref("password"), null], "Passwords must match")
+        .required("Confirm password"),
     }),
     onSubmit: async (values) => {
       try {
@@ -84,8 +90,13 @@ export function Signup() {
           value={formik.values.confirmPassword}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
-          helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
+          error={
+            formik.touched.confirmPassword &&
+            Boolean(formik.errors.confirmPassword)
+          }
+          helperText={
+            formik.touched.confirmPassword && formik.errors.confirmPassword
+          }
         />
         <button type="submit">Signup</button>
         <p style={{ marginTop: "1rem" }}>
@@ -95,3 +106,4 @@ export function Signup() {
     </div>
   );
 }
+export default Signup;

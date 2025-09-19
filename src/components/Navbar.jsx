@@ -5,9 +5,10 @@ import "../style.css";
 
 function Navbar() {
   const navigate = useNavigate();
-  const [user, setUser] = useState("user");
+  const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // Load user info from localStorage
   useEffect(() => {
     const username = localStorage.getItem("username");
     const role = localStorage.getItem("role");
@@ -17,7 +18,13 @@ function Navbar() {
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
+    setDropdownOpen(false); // close dropdown
     navigate("/login");
+  };
+
+  const handleLinkClick = () => {
+    // close dropdown when a link inside dropdown is clicked
+    setDropdownOpen(false);
   };
 
   return (
@@ -28,10 +35,9 @@ function Navbar() {
 
       <div className="navbar-right">
         <div className="nav-links">
-          <Link to="/">Gallery</Link>
-          {user && <Link to="/upload">Upload</Link>}
-
-          {user.role !== "admin" && <Link to="/mygallery">MyGallery</Link>}
+          <Link to="/" onClick={handleLinkClick}>Gallery</Link>
+           <Link to="/upload" onClick={handleLinkClick}>Upload</Link>
+          {user && user.role !== "admin" && <Link to="/mygallery" onClick={handleLinkClick}>MyGallery</Link>}
         </div>
 
         <div style={{ position: "relative" }}>
@@ -42,7 +48,7 @@ function Navbar() {
           />
           {dropdownOpen && (
             <div className="dropdown-menu">
-              {!user && <Link to="/login">Login</Link>}
+              {!user && <Link to="/login" onClick={handleLinkClick}>Login</Link>}
               {user && <button onClick={handleLogout}>Logout</button>}
             </div>
           )}

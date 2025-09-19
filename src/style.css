@@ -231,3 +231,23 @@ button:hover {
 .cancel-btn:hover {
   background-color: #f57c00;
 }
+/* style/gallery.css */
+
+.gallery-page {
+  padding: 16px;
+}
+
+.search-container {
+  margin-bottom: 16px;
+}
+
+.gallery-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.no-images {
+  font-size: 16px;
+  color: #555;
+}

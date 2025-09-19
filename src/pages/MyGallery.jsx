@@ -1,82 +1,47 @@
+// src/pages/MyGallery.js
 import React, { useState, useEffect } from "react";
-import ImageCard from "../components/ImageCard"; // shows single image card
-import { Upload } from "./Upload"; // we will reuse upload form for editing
+import ImageCard from "../components/ImageCard";
+import EditIcon from "@mui/icons-material/Edit";
+import IconButton from "@mui/material/IconButton";
+import { useNavigate } from "react-router-dom";
 import { API } from "../Global";
-import "../style.css";
 
 function MyGallery() {
-  const [images, setImages] = useState([]); // store my uploaded images
-  const [editingImage, setEditingImage] = useState(null); // store image which I am editing
+  const navigate = useNavigate();
+  const [images, setImages] = useState([]);
+  const userId = localStorage.getItem("id");
 
-  const userId = localStorage.getItem("id"); // get logged-in user id
-
-  // ✅ fetch only my images from backend
-  useEffect(() => {
-    fetchMyImages();
-  }, []);
-
-  const fetchMyImages = async () => {
+  // ✅ fetch only my images
+  async function fetchUserImages() {
     try {
-      const res = await fetch(`${API}/images/user/${userId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      const data = await res.json();
-      if (data.success) {
-        setImages(data.images); // save my images into state
-      }
+      const response = await fetch(`${API}/images?userId=${userId}`);
+      const data = await response.json();
+      setImages(data);
     } catch (err) {
-      console.error("Error while fetching my images:", err);
+      console.error("Error fetching user images:", err);
     }
-  };
+  }
 
-  // ✅ open edit form (modal/box) with existing data
-  const handleEdit = (image) => {
-    setEditingImage(image); // store selected image for editing
-  };
-
-  // ✅ close edit form
-  const handleClose = () => {
-    setEditingImage(null);
-  };
+  useEffect(() => {
+    fetchUserImages();
+  }, []);
 
   return (
     <div className="gallery-container">
-      {/* ✅ loop through my images */}
-      {images.map((img) => (
+      {images.map((image) => (
         <ImageCard
-          key={img.id}
-          image={img}
-          canEdit={true} // normal user can edit their own image
-          canDelete={false} // normal user cannot delete
-          onEdit={handleEdit}
+          key={image.id}
+          image={image}
+          editBtn={
+            <IconButton
+              onClick={() => navigate(`/images/edit/${image.id}`)}
+              color="secondary"
+            >
+              <EditIcon />
+            </IconButton>
+          }
         />
       ))}
-
-      {/* ✅ show edit form only if user clicked edit */}
-      {editingImage && (
-        <div className="edit-modal">
-          <div className="edit-box">
-            <h3>Edit My Image</h3>
-
-            {/* ✅ reuse Upload form with old data */}
-            <Upload
-              editData={editingImage} // pass existing image data
-              onSuccess={(updatedImage) => {
-                // update that image inside state
-                const updated = images.map((img) =>
-                  img.id === updatedImage.id ? updatedImage : img
-                );
-                setImages(updated);
-                handleClose(); // close modal after saving
-              }}
-            />
-
-            <button className="cancel-btn" onClick={handleClose}>
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

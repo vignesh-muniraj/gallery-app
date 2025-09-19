@@ -5,10 +5,9 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useNavigate, Link } from "react-router-dom";
-import { API } from "../pages/Global";
-import "../style.css";
+import { API } from "../Global";
 
-export function Login() {
+ function Login() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -88,3 +87,4 @@ export function Login() {
     </div>
   );
 }
+export default Login
